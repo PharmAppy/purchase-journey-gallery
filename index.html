@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hims Purchase Journey — Browse → Confirmation</title>
+  <style>
+    :root {
+      --bg: #0c1210;
+      --surface: #141c19;
+      --surface-2: #1a2420;
+      --border: #2a3832;
+      --text: #f1f6f3;
+      --muted: #9bb0a6;
+      --accent: #2db88a;
+      --accent-soft: rgba(45, 184, 138, 0.14);
+      --step-1: #5b8cff;
+      --step-2: #7b6cff;
+      --step-3: #2db88a;
+      --step-4: #e0a84a;
+      --step-5: #e06b6b;
+      --step-6: #4ecdc4;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(1100px 560px at 8% -12%, rgba(45, 184, 138, 0.16), transparent 48%),
+        radial-gradient(800px 480px at 92% 0%, rgba(70, 140, 200, 0.12), transparent 42%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    header { margin-bottom: 32px; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #8de0c0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      max-width: 62ch;
+      font-size: 16px;
+    }
+
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 28px 0 36px;
+    }
+
+    .pipe {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .pipe .n {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      color: #04140e;
+      background: var(--accent);
+    }
+
+    .pipe[data-step="1"] .n { background: var(--step-1); color: #fff; }
+    .pipe[data-step="2"] .n { background: var(--step-2); color: #fff; }
+    .pipe[data-step="3"] .n { background: var(--step-3); color: #04140e; }
+    .pipe[data-step="4"] .n { background: var(--step-4); color: #1a1205; }
+    .pipe[data-step="5"] .n { background: var(--step-5); color: #fff; }
+    .pipe[data-step="6"] .n { background: var(--step-6); color: #042420; }
+
+    .note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .note strong { color: var(--text); }
+
+    .flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .flow-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--surface-2), var(--surface));
+      border-left: 4px solid var(--accent);
+    }
+
+    .flow[data-step="1"] .flow-head { border-left-color: var(--step-1); }
+    .flow[data-step="2"] .flow-head { border-left-color: var(--step-2); }
+    .flow[data-step="3"] .flow-head { border-left-color: var(--step-3); }
+    .flow[data-step="4"] .flow-head { border-left-color: var(--step-4); }
+    .flow[data-step="5"] .flow-head { border-left-color: var(--step-5); }
+    .flow[data-step="6"] .flow-head { border-left-color: var(--step-6); }
+
+    .step-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8de0c0;
+      margin-bottom: 6px;
+    }
+
+    .flow[data-step="1"] .step-label { color: #9db8ff; }
+    .flow[data-step="2"] .step-label { color: #b5aaff; }
+    .flow[data-step="3"] .step-label { color: #8de0c0; }
+    .flow[data-step="4"] .step-label { color: #f0c978; }
+    .flow[data-step="5"] .step-label { color: #f0a0a0; }
+    .flow[data-step="6"] .step-label { color: #8ee8e1; }
+
+    .flow-head h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .flow-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 70ch;
+    }
+
+    .screens {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(180px, 220px);
+      gap: 14px;
+      padding: 20px 24px 24px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+    }
+
+    .screen {
+      scroll-snap-align: start;
+      background: #0a0f0d;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .screen.highlight {
+      border-color: rgba(45, 184, 138, 0.55);
+      box-shadow: 0 0 0 1px rgba(45, 184, 138, 0.25);
+    }
+
+    .screen button.thumb {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: zoom-in;
+      position: relative;
+    }
+
+    .screen button.thumb::after {
+      content: "Expand";
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #04140e;
+      background: rgba(141, 224, 192, 0.92);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      pointer-events: none;
+    }
+
+    .screen button.thumb:hover::after,
+    .screen button.thumb:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .screen button.thumb:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .screen img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 9 / 19.5;
+      object-fit: cover;
+      background: #111;
+      pointer-events: none;
+    }
+
+    .screen figcaption {
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .screen.highlight figcaption {
+      color: #9fe8cb;
+      font-weight: 600;
+    }
+
+    .secondary {
+      margin-top: 48px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .secondary h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .secondary .intro {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 20px;
+      max-width: 70ch;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background: rgba(4, 10, 8, 0.92);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.18s ease, visibility 0.18s ease;
+    }
+
+    .lightbox.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .lightbox-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .lightbox-caption {
+      color: var(--text);
+      font-weight: 600;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .lightbox-count {
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    .lightbox-close {
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .lightbox-close:hover,
+    .lightbox-nav:hover {
+      border-color: rgba(45, 184, 138, 0.5);
+    }
+
+    .lightbox-stage {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px 12px;
+      min-height: 0;
+    }
+
+    .lightbox-nav {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .lightbox-nav:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .lightbox-frame {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 0;
+      height: 100%;
+    }
+
+    .lightbox-frame img {
+      max-width: min(420px, 100%);
+      max-height: calc(100vh - 140px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: #0a0f0d;
+    }
+
+    .lightbox-hint {
+      text-align: center;
+      padding: 0 16px 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 24px 16px 60px; }
+      .flow-head { padding: 18px; }
+      .screens { padding: 16px; grid-auto-columns: minmax(150px, 70vw); }
+      .lightbox-nav { width: 38px; height: 38px; }
+      .screen button.thumb::after { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="eyebrow">Reference gallery · Hims (+ CVS order #)</div>
+      <h1>Full health purchase journey</h1>
+      <p class="lede">
+        Browse → product detail → detail info → add to cart → checkout → order confirmation.
+        Click any screenshot to expand.
+      </p>
+    </header>
+
+    <nav class="pipeline" aria-label="Journey steps">
+      <a class="pipe" data-step="1" href="#browse"><span class="n">1</span> Browse</a>
+      <a class="pipe" data-step="2" href="#pdp"><span class="n">2</span> Product detail</a>
+      <a class="pipe" data-step="3" href="#detail-info"><span class="n">3</span> Detail info</a>
+      <a class="pipe" data-step="4" href="#atc"><span class="n">4</span> Add to cart</a>
+      <a class="pipe" data-step="5" href="#checkout"><span class="n">5</span> Checkout</a>
+      <a class="pipe" data-step="6" href="#confirm"><span class="n">6</span> Confirmation</a>
+    </nav>
+
+    <p class="note">
+      <strong>For product / eng:</strong> Hims-style low-friction shop path.
+      Confirmation must include a clear <strong>order number</strong> (see CVS bonus screens).
+    </p>
+
+    <section class="flow" data-step="1" id="browse">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 1 · Product browsing</div>
+          <h2>Shop catalog &amp; categories</h2>
+          <p>User lands in Shop, browses health products / treatments, then taps into a product.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/01-shop-home.jpg" data-lb-caption="Shop home" aria-label="Expand Shop home">
+            <img src="images/01-shop-home.jpg" alt="Hims shop home" loading="lazy" />
+          </button>
+          <figcaption>Shop home</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/02-browse-categories.jpg" data-lb-caption="Browse categories" aria-label="Expand Browse categories">
+            <img src="images/02-browse-categories.jpg" alt="Hims browse categories" loading="lazy" />
+          </button>
+          <figcaption>Browse categories</figcaption>
+        </figure>
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/03-product-listing.jpg" data-lb-caption="Product listing → tap" aria-label="Expand Product listing">
+            <img src="images/03-product-listing.jpg" alt="Hims product listing" loading="lazy" />
+          </button>
+          <figcaption>Product listing → tap</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="flow" data-step="2" id="pdp">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 2 · Click product detail</div>
+          <h2>Open product detail page</h2>
+          <p>Product hero — imagery, name, price, primary CTA entry into the detail experience.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/04-pdp-open.jpg" data-lb-caption="PDP opened" aria-label="Expand PDP opened">
+            <img src="images/04-pdp-open.jpg" alt="Hims product detail open" loading="lazy" />
+          </button>
+          <figcaption>PDP opened</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/05-pdp-hero.jpg" data-lb-caption="Product hero + CTA" aria-label="Expand Product hero">
+            <img src="images/05-pdp-hero.jpg" alt="Hims product hero" loading="lazy" />
+          </button>
+          <figcaption>Product hero + CTA</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="flow" data-step="3" id="detail-info">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 3 · See detail info</div>
+          <h2>Scroll product information</h2>
+          <p>Benefits, how it works, ingredients / treatment details before committing to purchase.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/06-detail-content.jpg" data-lb-caption="Detail content" aria-label="Expand Detail content">
+            <img src="images/06-detail-content.jpg" alt="Hims product details scrolled" loading="lazy" />
+          </button>
+          <figcaption>Detail content</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/07-more-info.jpg" data-lb-caption="More info" aria-label="Expand More info">
+            <img src="images/07-more-info.jpg" alt="Hims more product info" loading="lazy" />
+          </button>
+          <figcaption>More info</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/08-benefits.jpg" data-lb-caption="Benefits / how it works" aria-label="Expand Benefits">
+            <img src="images/08-benefits.jpg" alt="Hims product benefits" loading="lazy" />
+          </button>
+          <figcaption>Benefits / how it works</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/09-lower-pdp.jpg" data-lb-caption="Lower PDP sections" aria-label="Expand Lower PDP">
+            <img src="images/09-lower-pdp.jpg" alt="Hims product footer info" loading="lazy" />
+          </button>
+          <figcaption>Lower PDP sections</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="flow" data-step="4" id="atc">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 4 · Add to cart</div>
+          <h2>Add product &amp; open cart</h2>
+          <p>User adds the treatment / product, then lands in cart ready to checkout.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/10-add-to-cart.jpg" data-lb-caption="Add to cart" aria-label="Expand Add to cart">
+            <img src="images/10-add-to-cart.jpg" alt="Hims add to cart action" loading="lazy" />
+          </button>
+          <figcaption>Add to cart</figcaption>
+        </figure>
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/11-cart.jpg" data-lb-caption="Cart with item" aria-label="Expand Cart">
+            <img src="images/11-cart.jpg" alt="Hims cart with item" loading="lazy" />
+          </button>
+          <figcaption>Cart with item</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="flow" data-step="5" id="checkout">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 5 · Checkout</div>
+          <h2>Shipping, payment, place order</h2>
+          <p>Cart → shipping / plan details → payment → submit order.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/12-cart-checkout.jpg" data-lb-caption="Cart → checkout" aria-label="Expand Cart checkout">
+            <img src="images/12-cart-checkout.jpg" alt="Hims checkout from cart" loading="lazy" />
+          </button>
+          <figcaption>Cart → checkout</figcaption>
+        </figure>
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/13-shipping-payment.jpg" data-lb-caption="Shipping / payment" aria-label="Expand Shipping payment">
+            <img src="images/13-shipping-payment.jpg" alt="Hims shipping and payment" loading="lazy" />
+          </button>
+          <figcaption>Shipping / payment</figcaption>
+        </figure>
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/14-review-order.jpg" data-lb-caption="Review order" aria-label="Expand Review order">
+            <img src="images/14-review-order.jpg" alt="Hims order review" loading="lazy" />
+          </button>
+          <figcaption>Review order</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/15-place-order.jpg" data-lb-caption="Place order" aria-label="Expand Place order">
+            <img src="images/15-place-order.jpg" alt="Hims place order" loading="lazy" />
+          </button>
+          <figcaption>Place order</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="flow" data-step="6" id="confirm">
+      <div class="flow-head">
+        <div>
+          <div class="step-label">Step 6 · Order confirmation</div>
+          <h2>Success / order placed</h2>
+          <p>Confirmation after purchase. Use the CVS screens below for an explicit order-number pattern.</p>
+        </div>
+      </div>
+      <div class="screens">
+        <figure class="screen highlight">
+          <button type="button" class="thumb" data-lb-src="images/16-confirmation.jpg" data-lb-caption="Order confirmation" aria-label="Expand Order confirmation">
+            <img src="images/16-confirmation.jpg" alt="Hims order confirmation" loading="lazy" />
+          </button>
+          <figcaption>Order confirmation</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/17-order-history.jpg" data-lb-caption="Order history (follow-up)" aria-label="Expand Order history">
+            <img src="images/17-order-history.jpg" alt="Hims order history" loading="lazy" />
+          </button>
+          <figcaption>Order history (follow-up)</figcaption>
+        </figure>
+        <figure class="screen">
+          <button type="button" class="thumb" data-lb-src="images/18-order-detail.jpg" data-lb-caption="Order detail" aria-label="Expand Order detail">
+            <img src="images/18-order-detail.jpg" alt="Hims order detail" loading="lazy" />
+          </button>
+          <figcaption>Order detail</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="secondary">
+      <h2>Bonus: explicit order number (CVS Health)</h2>
+      <p class="intro">
+        Hims confirmation is clean but softer on order IDs. CVS shows a hard
+        <strong>Order #741610123</strong> — better pattern if Pharmappy needs that visibility.
+      </p>
+
+      <section class="flow" data-step="6" id="cvs-order-number">
+        <div class="flow-head">
+          <div>
+            <div class="step-label">Order # pattern</div>
+            <h2>CVS — confirmation + order details</h2>
+            <p>Confirmation screen with order number, then order details with tracking stepper.</p>
+          </div>
+        </div>
+        <div class="screens">
+          <figure class="screen highlight">
+            <button type="button" class="thumb" data-lb-src="images/19-cvs-confirmation.jpg" data-lb-caption="Confirmation · Order #" aria-label="Expand CVS confirmation">
+              <img src="images/19-cvs-confirmation.jpg" alt="CVS order confirmation with order number" loading="lazy" />
+            </button>
+            <figcaption>Confirmation · Order #…</figcaption>
+          </figure>
+          <figure class="screen highlight">
+            <button type="button" class="thumb" data-lb-src="images/20-cvs-order-detail.jpg" data-lb-caption="Order details · #741610123" aria-label="Expand CVS order details">
+              <img src="images/20-cvs-order-detail.jpg" alt="CVS order details with order number" loading="lazy" />
+            </button>
+            <figcaption>Order details · #741610123</figcaption>
+          </figure>
+          <figure class="screen">
+            <button type="button" class="thumb" data-lb-src="images/21-cvs-purchases.jpg" data-lb-caption="Purchases list" aria-label="Expand Purchases list">
+              <img src="images/21-cvs-purchases.jpg" alt="CVS purchases list" loading="lazy" />
+            </button>
+            <figcaption>Purchases list</figcaption>
+          </figure>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Pharmappy purchase-journey reference. Screenshots stored with this page (no Mobbin login required).
+    </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Screenshot viewer">
+    <div class="lightbox-bar">
+      <div class="lightbox-caption" id="lbCaption"></div>
+      <div class="lightbox-count" id="lbCount"></div>
+      <button type="button" class="lightbox-close" id="lbClose" aria-label="Close">Close</button>
+    </div>
+    <div class="lightbox-stage">
+      <button type="button" class="lightbox-nav" id="lbPrev" aria-label="Previous">‹</button>
+      <div class="lightbox-frame">
+        <img id="lbImage" src="" alt="" />
+      </div>
+      <button type="button" class="lightbox-nav" id="lbNext" aria-label="Next">›</button>
+    </div>
+    <p class="lightbox-hint">Esc to close · ← → to navigate</p>
+  </div>
+
+  <script>
+    (function () {
+      const thumbs = Array.from(document.querySelectorAll(".thumb[data-lb-src]"));
+      const lightbox = document.getElementById("lightbox");
+      const lbImage = document.getElementById("lbImage");
+      const lbCaption = document.getElementById("lbCaption");
+      const lbCount = document.getElementById("lbCount");
+      const lbClose = document.getElementById("lbClose");
+      const lbPrev = document.getElementById("lbPrev");
+      const lbNext = document.getElementById("lbNext");
+
+      let index = 0;
+
+      function openAt(i) {
+        index = i;
+        const el = thumbs[index];
+        lbImage.src = el.dataset.lbSrc;
+        lbImage.alt = el.querySelector("img")?.alt || el.dataset.lbCaption || "";
+        lbCaption.textContent = el.dataset.lbCaption || "";
+        lbCount.textContent = (index + 1) + " / " + thumbs.length;
+        lbPrev.disabled = index === 0;
+        lbNext.disabled = index === thumbs.length - 1;
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.classList.add("lightbox-open");
+        lbClose.focus();
+      }
+
+      function close() {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("lightbox-open");
+        lbImage.removeAttribute("src");
+      }
+
+      function next() {
+        if (index < thumbs.length - 1) openAt(index + 1);
+      }
+
+      function prev() {
+        if (index > 0) openAt(index - 1);
+      }
+
+      thumbs.forEach((btn, i) => {
+        btn.addEventListener("click", () => openAt(i));
+      });
+
+      lbClose.addEventListener("click", close);
+      lbNext.addEventListener("click", next);
+      lbPrev.addEventListener("click", prev);
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox || e.target.classList.contains("lightbox-stage") || e.target.classList.contains("lightbox-frame")) {
+          close();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (!lightbox.classList.contains("is-open")) return;
+        if (e.key === "Escape") close();
+        if (e.key === "ArrowRight") next();
+        if (e.key === "ArrowLeft") prev();
+      });
+    })();
+  </script>
+</body>
+</html>
